@@ -29,6 +29,9 @@ export default function StarRating({ maxRating = 5 }) {
   function handleRating(rate) {
     setRating(rate);
   }
+  function onlyMoreCommits() {
+    console.log("i need more commits xd");
+  }
 
   return (
     <div style={containerStyle}>
