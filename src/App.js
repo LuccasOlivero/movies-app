@@ -51,6 +51,13 @@ const tempWatchedData = [
 const KEY = "43e11dbe";
 
 export default function App() {
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const query = "interstell";
+
   useEffect(() => {
     async function fetchMovies() {
       try {
