@@ -1,5 +1,5 @@
 import { findAllByDisplayValue } from "@testing-library/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const tempMovieData = [
   {
@@ -48,9 +48,44 @@ const tempWatchedData = [
   },
 ];
 
+const KEY = "43e11dbe";
+
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
+  const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const query = "interstell";
+
+  useEffect(() => {
+    async function fetchMovies() {
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+        );
+
+        if (!res.ok)
+          throw new Error(
+            "Something went wrong with fetching movies, try again"
+          );
+
+        const data = await res.json();
+
+        if (data.Response === "False") throw new Error("movie not found");
+
+        setMovies(data.Search);
+        setIsLoading(false);
+      } catch (err) {
+        console.error(err.message);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchMovies();
+  }, []);
 
   return (
     <>
@@ -61,7 +96,9 @@ export default function App() {
       </NavBar>
       <Main>
         <Box>
-          <MoviesList movies={movies} />
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MoviesList movies={movies} />}
+          {error && <ErrorMessage message={error} />}
         </Box>
 
         <Box>
@@ -71,6 +108,18 @@ export default function App() {
       </Main>
     </>
   );
+}
+
+function ErrorMessage({ message }) {
+  return (
+    <p className="error">
+      nel papá, <span>{message}</span>
+    </p>
+  );
+}
+
+function Loader() {
+  return <h2 className="loader">Loading...</h2>;
 }
 
 const average = (arr) =>
@@ -105,7 +154,7 @@ function Logo() {
 function NumResults({ movies }) {
   return (
     <p className="num-results">
-      Found <strong>{movies.length}</strong> results
+      Found <strong>{movies?.length}</strong> results
     </p>
   );
 }
