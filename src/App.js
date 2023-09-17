@@ -156,15 +156,6 @@ function Search({ setQuery, query }) {
   );
 }
 
-function Logo() {
-  return (
-    <div className="logo">
-      <span role="img">🍿</span>
-      <h1>usePopcorn</h1>
-    </div>
-  );
-}
-
 function NumResults({ movies }) {
   return (
     <p className="num-results">
